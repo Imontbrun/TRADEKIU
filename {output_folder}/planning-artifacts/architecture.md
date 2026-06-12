@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2]
+stepsCompleted: [1, 2, 3]
 inputDocuments:
   - '{output_folder}/planning-artifacts/prds/prd-TRADEKIU-2026-06-12/prd.md'
   - '{output_folder}/planning-artifacts/prds/prd-TRADEKIU-2026-06-12/addendum.md'
@@ -122,3 +122,52 @@ El reporte evolutivo (FR-19) puede escalar en tokens al mes 3 — diseñar con c
 7. **Costo de IA medible:** registrar consumo por llamada (modelo, tokens, costo estimado) desde el día 1 para validar NFR-2 y detectar escalada del reporte evolutivo.
 
 8. **Tiempo de carga en frío (NFR-3 en móvil):** app shell cacheado, skeleton screens, PWA opcional — el check-in debe estar visible en < 3 segundos en iPhone 15 con red móvil.
+
+---
+
+## Starter Template Evaluation
+
+### Primary Technology Domain
+
+Full-stack web application: SPA responsive (desktop-first, iPhone 15 / Safari iOS) + API server-side + cron jobs (Supabase Edge Functions) + integraciones de IA.
+
+### Starter Options Considered
+
+| Starter | Fortaleza | Descartado por |
+|---|---|---|
+| Next.js + Supabase (oficial) | Integración cero-config con plataforma elegida; ecosistema de charts | — (seleccionado) |
+| T3 Stack (create-t3-app) | Type-safety con tRPC | tRPC + ORM redundan con Supabase client; diseñado para multi-user |
+| SvelteKit + Supabase | Simplicidad | Recharts (mejor para P&L calendar) es React-only |
+
+### Selected Starter: Next.js + Supabase (Official)
+
+**Rationale for Selection:**
+Supabase es la plataforma backend elegida. El starter oficial de Supabase + Next.js provee integración cero-config y establece la mayoría de decisiones técnicas necesarias en un solo comando. La separación de responsabilidades es limpia: Vercel (frontend + API routes, free tier) / Supabase (BD + Edge Functions/cron + Storage, free tier con keep-alive).
+
+**Initialization Command:**
+
+```bash
+npx create-next-app -e with-supabase tradekiu
+```
+
+**Architectural Decisions Provided by Starter:**
+
+**Language & Runtime:**
+TypeScript (strict mode) + Node.js. Todo el codebase tipado: tipos generados por Supabase CLI desde el schema de BD, validación de extracción de IA con zod.
+
+**Styling Solution:**
+Tailwind CSS v4 + shadcn/ui. Componentes de charts: Recharts (P&L calendar, win rate, R:R) o Tremor (built on Recharts, Tailwind-native — evaluar en spike del dashboard).
+
+**Build Tooling:**
+Next.js App Router con Turbopack (dev) y build optimizado (prod). Server Components para páginas del dashboard (SSR de datos de BD). Client Components para interacciones: check-in, grabación de audio, upload de CSV.
+
+**Testing Framework:**
+Jest + React Testing Library (unit/integration). Playwright (E2E — especialmente crítico para el flujo de audio en Safari iOS, que jsdom no cubre). Tests de contrato del pipeline de IA con fixtures (mock HTTP a nivel de red, sin LLM real en CI).
+
+**Code Organization:**
+Next.js App Router conventions: `app/` para rutas, `components/` para UI, `lib/` para lógica de dominio (pipeline de audio, parser CSV, cliente Supabase, cálculos de métricas), `lib/ai/` para integraciones de IA (transcripción, extracción, generación de reporte).
+
+**Development Experience:**
+Turbopack HMR, TypeScript strict, ESLint, Prettier. Supabase CLI para migraciones de BD y generación de tipos. GitHub Actions para CI (tests) + keep-alive ping a Supabase (evita pausa de proyecto inactivo).
+
+**Note:** La inicialización del proyecto con este comando debe ser la primera story de implementación.
