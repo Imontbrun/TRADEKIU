@@ -1,7 +1,3 @@
-# BMAD output directories
-{output_folder}/
-_bmad-output/
-
 # BMAD user-specific config (personal settings)
 _bmad/config.user.toml
 _bmad/custom/config.user.toml
