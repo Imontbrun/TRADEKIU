@@ -1,6 +1,6 @@
 ---
 title: "PRD: TRADEKIU"
-status: draft
+status: final
 created: 2026-06-12
 updated: 2026-06-12
 ---
@@ -40,7 +40,7 @@ Todo el diseño sirve a este ciclo. Si una feature no aparece en este ritual, pr
 
 ### F1 — Check-in pre-sesión
 
-- **FR-1** El usuario puede completar un check-in diario con los 11 campos confirmados en el brief: horas de sueño (botones 4h–9h+), calidad del sueño (slider 1–100), workout (sí/no), desayuno (sí/no), café (sí/no), estado de ánimo (slider 1–5), estrés (slider 1–5), enfoque (sí/no/más o menos), lugar (casa/otro), dispositivo (computadora/teléfono/tablet), calendario económico revisado (sí/no).
+- **FR-1** El usuario puede completar un check-in diario con los 11 campos confirmados en el brief: horas de sueño (botones 4h–9h+), calidad del sueño (slider 1–100), workout (sí/no), desayuno (sí/no), café (sí/no), estado de ánimo (slider 1–5), estrés (slider 1–5), enfoque (sí/no/más o menos), lugar (casa/otro), dispositivo (computadora/teléfono/tablet), calendario económico revisado (sí/no). Los 11 campos son fijos en v1 — fueron diseñados a medida por el propio usuario; modificarlos es un cambio de código, no una función de la app. *(Decisión del usuario: descarta los "botones configurables" que sugería el brief.)*
 - **FR-2** El check-in registra automáticamente fecha y hora de completado — la hora sirve como dato de análisis ("tradear tarde/temprano") sin pedir un campo extra.
 - **FR-3** Solo existe un check-in por día; puede editarse hasta las 23:59 (hora de Caracas) de ese mismo día. No se permite llenar check-ins de días pasados — un día sin check-in queda como "sin contexto" para proteger la honestidad del dato. *(Confirmado por el usuario.)*
 - **FR-4** El check-in es usable desde el teléfono (web responsive, botones touch-friendly), porque la mañana no siempre ocurre frente a la computadora.
@@ -58,7 +58,7 @@ Todo el diseño sirve a este ciclo. Si una feature no aparece en este ritual, pr
 
 - **FR-10** El usuario puede importar sus trades subiendo el CSV exportado del Trade Log de paper trading de TradingView. `[SUPUESTO]` v1 soporta únicamente ese formato; otros formatos llegan con v2.
 - **FR-11** La importación es idempotente: re-subir un CSV con trades ya registrados no crea duplicados.
-- **FR-12** Cada trade importado queda asociado a su día (y por tanto a su check-in y audio). Campos mínimos: instrumento, dirección, precio de entrada/salida, hora de entrada/salida, tamaño, P&L. El R:R se calcula como aproximado a partir del historial (R realizado desde P&L); si el CSV trae stop/target se usa el R:R planificado real. *(Confirmado: R:R aproximado del historial es aceptable.)*
+- **FR-12** Cada trade importado queda asociado a su día (y por tanto a su check-in y audio). Campos mínimos: instrumento, dirección, precio de entrada/salida, hora de entrada/salida, tamaño, P&L. El R:R se calcula de forma aproximada a partir del historial (R realizado desde P&L); si el CSV trae stop/target se usa el R:R planificado real. *(Confirmado: R:R aproximado del historial es aceptable.)*
 - **FR-13** v2 (Mes 2+): integración con MetaApi para importación automática desde Vantage (MT4/MT5) y la cuenta fondeada. Queda fuera del v1 pero el modelo de datos debe poder recibir trades de ambas fuentes sin migración.
 
 ### F4 — Dashboard de performance
@@ -98,13 +98,13 @@ Heredadas del brief, con sus contra-métricas:
 
 **v1 (Mes 1 — paper trading):** F1, F2, F3 (solo CSV TradingView), F4, F5. Web app desktop-first responsive.
 
-**Explícitamente fuera de v1:** importación automática por API (v2), app móvil nativa, análisis conversacional ("pregúntale a la app"), multi-usuario/multi-cuenta, integración con prop firms. *(Nota: el recordatorio de check-in de FR-21 es la única "notificación" dentro del v1; no hay más alertas push.)*
+**Explícitamente fuera de v1:** importación automática por API (v2), app móvil nativa, análisis conversacional ("pregúntale a la app"), multi-usuario/multi-cuenta, integración con prop firms, configuración de campos del check-in desde la UI. *(Nota: el recordatorio de check-in de FR-21 es la única "notificación" dentro del v1; no hay más alertas push.)*
 
 **v2 (Mes 2+):** MetaApi (Vantage MT4/MT5 y cuenta fondeada), refinamiento del análisis de IA con 30+ días de data real.
 
 ## 7. Preguntas Abiertas
 
-1. ~~Zona horaria / semana de trading~~ — **Resuelta:** Caracas (UTC-4), sesión desde el NY open (9:30 AM ET), semana lun–vie, reporte el lunes 8:00 AM.
+1. ~~Zona horaria / semana de trading~~ — **Resuelta:** ver «Contexto operativo» (§1) y FR-17.
 2. **Formato real del CSV de TradingView:** hay que validar con un export real del paper trading del usuario qué columnas trae (en particular stop/target para el R:R planificado de FR-12). *(Tarea para arquitectura/primer sprint.)*
 3. **Costo mensual de IA:** estimación pendiente en arquitectura; presentar al usuario antes de construir (ver NFR-2).
 
